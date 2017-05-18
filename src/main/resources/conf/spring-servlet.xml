@@ -35,12 +35,14 @@
          </mvc:message-converters>  
      </mvc:annotation-driven>  
      
-     <mvc:interceptors>
-     	 <mvc:interceptors>  
-		    <bean class="com.sun.springshiro.interceptor.AuthInterceptor"/>  
-		</mvc:interceptors>  
-     </mvc:interceptors>
-	
+  	<mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="com.sun.springshiro.interceptor.AuthInterceptor">
+            </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>  
+     
 	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
 	    <property name="securityManager" ref="securityManager"/>
 	    <!-- override these for application-specific URLs if you like: -->
@@ -60,7 +62,8 @@
 	            # some example chain definitions:
 	            /admin/** = authc, roles[admin]
 	            /docs/** = authc, perms[document:read]
-	            /** = authc
+	            /public/hello = authc
+	            /public/login = anon
 	            # more URL-to-FilterChain definitions here
 	        </value>
 	    </property>
