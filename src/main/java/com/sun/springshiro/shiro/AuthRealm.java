@@ -9,6 +9,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
@@ -22,7 +23,8 @@ public class AuthRealm extends AuthorizingRealm {
 	protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
 		// TODO Auto-generated method stub
 		logger.info("doGetAuthorizationInfo");
-		return null;
+		SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();  
+		return info;
 	}
 
 	@Override
@@ -35,9 +37,8 @@ public class AuthRealm extends AuthorizingRealm {
 	        String password = new String(userToken.getPassword());
 	        user.put("username", username);
 	        user.put("password", password);
-		 SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.get("password").toString().trim(), getName());
-         clearCachedAuthorizationInfo(info.getPrincipals());
+		 SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user.get("username").toString(), user.get("password").toString().trim(), getName());
+//         clearCachedAuthorizationInfo(info.getPrincipals());
          return info;
 	}
-
 }

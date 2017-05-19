@@ -10,6 +10,43 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 	<context:component-scan base-package="com.sun" />
 	    	
+	 <!--  
+    - The ContentNegotiatingViewResolver delegates to the InternalResourceViewResolver and BeanNameViewResolver,  
+    - and uses the requested media type (determined by the path extension) to pick a matching view.   
+    - When the media type is 'text/html', it will delegate to the InternalResourceViewResolver's JstlView,   
+    - otherwise to the BeanNameViewResolver.  
+    -->  
+    <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">  
+        <property name="contentNegotiationManager" ref="cnManager"/>  
+        <property name="viewResolvers" ref="beetlViewResolver"/>  
+    </bean>  
+    
+    <bean name="beetlConfig" class="org.beetl.ext.spring.BeetlGroupUtilConfiguration" init-method="init">
+        <property name="configFileResource" value="classpath:beetl.properties"/>
+	</bean>
+	<bean name="beetlViewResolver" class="org.beetl.ext.spring.BeetlSpringViewResolver">
+	       	<property name="prefix" value="/pages/"/>
+	        <property name="suffix" value=".html"/>
+	        <property name="contentType" value="text/html;charset=UTF-8"/>
+	        <property name="order" value="0"/>
+	        <property name="config" ref="beetlConfig"/>
+	</bean>
+
+    <!-- Simple strategy: only path extension is taken into account -->  
+    <bean id="cnManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean">  
+        <property name="favorPathExtension" value="true"/>  
+        <property name="ignoreAcceptHeader" value="true"/>  
+        <property name="defaultContentType" value="text/html"/>  
+
+        <property name="mediaTypes">  
+            <map>  
+                <entry key="html" value="text/html" />  
+                <entry key="xml" value="application/xml" />  
+                <entry key="atom" value="application/atom+xml" />  
+            </map>  
+        </property>  
+    </bean>     	
+	    	
     <mvc:annotation-driven>  
          <mvc:message-converters>  
              <bean class="org.springframework.http.converter.StringHttpMessageConverter">  
@@ -46,9 +83,9 @@
 	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
 	    <property name="securityManager" ref="securityManager"/>
 	    <!-- override these for application-specific URLs if you like: -->
-	    <property name="loginUrl" value="/public/login"/>
-	    <property name="successUrl" value="/home.jsp"/>
-	    <property name="unauthorizedUrl" value="/unauthorized.jsp"/>
+	    <property name="loginUrl" value="/public/loginPage"/>
+<!-- 	    <property name="successUrl" value="/home.jsp"/> -->
+<!-- 	    <property name="unauthorizedUrl" value="/unauthorized.jsp"/> -->
 	    <!-- The 'filters' property is not necessary since any declared javax.servlet.Filter bean  -->
 	    <!-- defined will be automatically acquired and available via its beanName in chain        -->
 	    <!-- definitions, but you can perform instance overrides or name aliases here if you like: -->
@@ -62,8 +99,8 @@
 	            # some example chain definitions:
 	            /admin/** = authc, roles[admin]
 	            /docs/** = authc, perms[document:read]
-	            /public/hello = authc
-	            /public/login = anon
+	            /public/** = anon
+	            /shiro/** = authc
 	            # more URL-to-FilterChain definitions here
 	        </value>
 	    </property>

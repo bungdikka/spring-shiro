@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>login</title>
+</head>
+<body>
+	<form action="public/login">
+		<input id="username" name="username">
+		<input id="password" name="password" type="password">
+		<button type="button" onclick="doLogin()">登录</button>
+	</form>
+	<a href="/shiro/index">首页</a>
+</body>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.js"></script>
+<script type="text/javascript">
+function doLogin(){
+	var username = $('#username').val();
+	var password = $('#password').val();
+	$.ajax({
+		type : 'post',
+		url : '/public/login',
+		data : {
+			username : username,
+			password : password
+		},
+		success : function(data) {
+			console.log(data);
+		},
+		error : function( jqXHR, textStatus, errorThrown ) {
+
+		}
+	});
+}
+</script>
+</html>
